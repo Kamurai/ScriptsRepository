@@ -1,0 +1,12 @@
+#!/bin/bash
+for arg in $*
+do
+        echo $arg
+done
+echo "for loop done now while loop"
+while [ $# != 0 ]
+do
+        echo $1
+        shift
+done
+

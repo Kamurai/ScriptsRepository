@@ -1,0 +1,20 @@
+messagebus:x:102:105::/var/run/dbus:/bin/false
+whoopsie:x:103:106::/nonexistent:/bin/false
+landscape:x:104:109::/var/lib/landscape:/bin/false
+academyit:x:1000:1000:Academy IT,,,:/home/academyit:/bin/bash
+sshd:x:105:65534::/var/run/sshd:/usr/sbin/nologin
+itsupport:x:1001:1001:IT Support,,,:/home/itsupport:/bin/bash
+postfix:x:106:114::/var/spool/postfix:/bin/false
+frankfurt.trainee01:x:1002:1002::/home/frankfurt.trainee01:/bin/sh
+frankfurt.trainee02:x:1003:1003::/home/frankfurt.trainee02:/bin/sh
+frankfurt.trainee03:x:1004:1004::/home/frankfurt.trainee03:/bin/sh
+frankfurt.trainee04:x:1005:1005::/home/frankfurt.trainee04:/bin/sh
+frankfurt.trainee05:x:1006:1006::/home/frankfurt.trainee05:/bin/sh
+frankfurt.trainee06:x:1007:1007::/home/frankfurt.trainee06:/bin/sh
+frankfurt.trainee07:x:1008:1008::/home/frankfurt.trainee07:/bin/sh
+frankfurt.trainee08:x:1009:1009::/home/frankfurt.trainee08:/bin/sh
+frankfurt.trainee09:x:1010:1010::/home/frankfurt.trainee09:/bin/sh
+frankfurt.trainee10:x:1011:1011::/home/frankfurt.trainee10:/bin/sh
+frankfurt.trainee11:x:1012:1012::/home/frankfurt.trainee11:/bin/sh
+frankfurt.trainee12:x:1013:1013::/home/frankfurt.trainee12:/bin/sh
+sophosav:x:999:1014:Sophos Anti-Virus:/opt/sophos-av:/bin/sh

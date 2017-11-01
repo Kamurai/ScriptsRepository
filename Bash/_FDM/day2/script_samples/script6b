@@ -1,0 +1,18 @@
+#!/bin/bash
+echo "Enter the name of your file or directory"
+read name
+if [ -e $name ]
+then
+        if [ -f $name ]
+        then
+                echo "$name is a file!"
+        elif [ -d $name ]
+        then
+                echo "$name is a directory"
+        else
+ 		echo "$name is not a file or directory but it does exist!!"
+        fi
+else
+        echo "$name does not exist!"
+fi
+

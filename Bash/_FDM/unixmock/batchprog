@@ -1,0 +1,42 @@
+#!/bin/bash
+# program to demonstrate job control
+# errors added deliberately
+ date
+	sleep 5
+  grep stringDoesNotExist < /etc/password
+
+# use date to add to results
+
+ date
+	sleep 2
+  ls -l thisFileDoesNotExist
+
+# this is where you can run ls
+
+ date
+	sleep 5
+
+ date
+	sleep 5
+
+ date
+	sleep 5
+
+ date
+	sleep 5
+
+ 
+# need to be able to show nohup
+
+ date
+  sleep 10
+
+ date
+  sleep 10
+# add another error which should appear after reconnecting
+	ls -l reconnectedAndThisShoudAppearInErrorsFile
+ date
+  sleep 10
+
+ date
+  sleep 10

@@ -1,0 +1,24 @@
+#!/bin/bash
+function checklength (){
+        if [ $1 -eq 4 ]
+        then
+                echo "Good - word is the correct length!"
+        else
+                echo "Wrong length - your word was actually" $length "letters in length."
+        fi
+}
+
+ans="hello"
+while [ "$ans" ]
+do
+        echo " Please enter a 4 letter word - just enter to quit"
+        read ans
+
+        length=$(echo -n $ans | wc -c)
+        output=$(checklength $length)
+        if [ $length != "0" ]
+        then
+                echo "Output from function is: "$output
+        fi
+done
+

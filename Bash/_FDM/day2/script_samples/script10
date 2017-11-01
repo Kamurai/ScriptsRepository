@@ -1,0 +1,15 @@
+#!/bin/bash
+
+function printDetails() {
+        echo "Welcome $1."
+        echo "You are "$2" years old."
+}
+
+echo "Enter your name:"
+read name
+
+echo "Enter your age:"
+read age
+
+printDetails $name $age
+

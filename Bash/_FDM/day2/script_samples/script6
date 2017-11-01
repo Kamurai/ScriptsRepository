@@ -1,0 +1,9 @@
+#!/bin/bash
+echo "Do you like UNIX? (enter y or n)"
+read ans
+if [ $ans = "y" ]
+then
+        echo "I love UNIX"
+else
+        echo "I prefer watching paint dry!"
+fi

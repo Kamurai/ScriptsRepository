@@ -1,0 +1,10 @@
+#!/bin/bash
+echo "Do you like UNIX? (enter y or n)"
+read ans
+if [[ $ans = y* || $ans = Y* ]]
+then
+        echo "I love UNIX"
+else
+        echo "I prefer watching paint dry!"
+fi
+

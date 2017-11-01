@@ -1,0 +1,494 @@
+#!bin/bash
+#Christopher Kemerait
+#Due Date: 18 July 2017
+#Remove script for Unix Project
+
+#Phase 1
+
+#this script should bin in ~/project
+#this script should execute as 'sh remove fileName'
+
+#this script should mimic the rm comand
+	#If the file does not exist, the display error message
+	#If no fileName is provided, then display eror message
+	#If a directory is supplied for fileName, then display error message
+
+#Accepts name of file as argument
+	#existing file
+	#If fileName is this script, display, "Attempting to delete remove - operation aborted' and exit
+
+#Moves file to ~/deleted
+	#if ~/deleted does NOT exist, then create it
+		#create ~/.restore.info
+			#line format: fileName_iNode:directory
+
+#Renames file to fileName_iNode
+
+#Phase 3
+
+#Add capability to delete multiple files
+
+#Add first argument capability:
+	#Add -i capability
+
+	#Add -v capability
+
+	#Add -iv (? vi) capability
+
+#Phase 4
+
+#Add first argument capability:
+	#Add -r capability
+		#move the files
+		#record the directories
+
+
+#Functions
+funcCheckNoArguments()
+{
+	#The function checks if no arguments are supplied.
+	#The function should exit if there are no arguments.
+
+	#If there are not any arguments
+	if [ $1 \< 1 ]
+	then
+		echo "There is no target file."
+		exit 700
+	fi
+}
+
+funcCheckTooManyArguments()
+{
+	#The function checks if too many arguments are supplied.
+	#The function should exit if true.
+
+	#If there is more than 1 argument
+	if [ $1 \> 1 ]
+	then
+		echo "There is more than 1 file."
+		exit 701
+	fi
+}
+
+funcCheckAnythingExists()
+{
+	#The function checks if a supplied target is a file or directory.
+	#The function should exit if false.
+#Pivot?
+	varTargetIsFile=0
+	varTargetIsDirectory=0
+	#If file or directory does not exist
+	if [ -f $1 ]
+	then
+		varTargetIsFile=1
+	elif [ -d $1 ]
+	then
+		varTargetIsDirectory=1
+	else
+		echo "Target file or directory $1 does not exist"
+		exit 702
+	fi
+}
+
+funcCheckFileExists()
+{
+	#This function checks if a supplied file or directory to be removed exists
+	#this function should exit if false;
+#Pivot?
+	varTargetIsFile=0
+	varTargetIsDirectory=0
+
+	#If file does not exist
+	if [ -f $1 ]
+	then
+		varTargetIsFile=1
+	elif [ -d $1 ]
+	then
+		varTargetIsDirectory=1
+		if [ $varCommandR = 0 ]
+		then
+			echo "rm: cannot remove '"$1"': Is a directory"
+			exit 705
+		fi
+	else
+		echo "Target file $1 does not exist"
+		exit 703
+	fi
+}
+
+funcCheckIfSelf()
+{
+	#The function checks to see if the supplied file is this file.
+	#The function should exit if true.
+
+	#If file is this script
+	if [ $1 = $0 ] #? expand to full path? use pid?
+	then
+		echo "Attempting to delete remove - operation aborted"
+		exit 704
+	fi
+}
+
+funcCreateRestoreFile()
+{
+	#The function creates the .restore.info.
+
+	#create ~/.restore.info
+	touch ~/.restore.info
+}
+
+funcCheckRestoreExists()
+{
+	#The function checks if the .restore.info exists.
+	#The function will create .restore.info if false.
+
+	#if ~/.restore.info does NOT exist
+	if [ ! -f ~/.restore.info ]
+	then
+		funcCreateRestoreFile
+	fi
+}
+
+funcCreateDeletedFolder()
+{
+	#The function creates the ~/deleted folder.
+
+	#create ~/deleted
+	mkdir ~/deleted
+}
+
+funcCheckDeletedExists()
+{
+	#The function check if the ~/deleted folder exists.
+	#The function should create it, if false.
+
+	#if ~/deleted does NOT exist
+	if [ ! -d ~/deleted ]
+	then
+		funcCreateDeletedFolder
+	fi
+
+	funcCheckRestoreExists
+}
+
+funcGetFileParts()
+{
+	#The function gets the parts of the supplied file
+
+	varFileName=$(basename $1)
+	varINode=$(stat $1 -c%i)
+	varDirectory=$(readlink -e $1)
+	varTrueDirectory=${varDirectory%/*}/
+}
+
+funcWriteRecordToFile()
+{
+	#The function appends the record to file.
+	#This is intended for files.
+
+	#append record to file
+	#line format: fileName_iNode:directory
+	echo $varFileName'_'$varINode':'$varDirectory >> ~/.restore.info
+	
+}
+
+funcWriteStubToFile()
+{
+	#The function appends the stubbed record to .restore.info.
+	#This is  intended for directories.
+
+	#append stub to file
+	#line format: stub_stub:directory
+	echo 'stub_stub:'$varDirectory'/stub' >> ~/.restore.info
+}
+
+funcRenameDeletedFile()
+{
+	#The function renames a file in ~/deleted
+
+	varRename1=~/deleted/$varFileName
+	varRename2=~/deleted/$varFileName'_'$varINode
+
+	#Rename file to fileName_iNode
+	mv $varRename1 $varRename2
+}
+
+funcRecursiveAttack()
+{
+	#The function call remove for each item in the given directory
+
+	varAttackList=$(ls $varDirectory)
+
+	for x in $varAttackList
+	do
+		sh ~/project/remove -r $varDirectory/$x
+	done
+}
+
+funcDeleteFile()
+{
+	#Moves file to ~/deleted, appends record to .restore.info, renames file
+	#appends directory record to .restore.info, recursively removes containing items, removes directory
+
+	if [ $varTargetIsFile = 1 ]
+	then
+		#Move file to ~/deleted
+		mv $varDirectory ~/deleted/
+
+		#Enter record to restore.info
+		funcWriteRecordToFile
+
+		#Rename file to fileName_iNode
+		funcRenameDeletedFile
+	elif [ $varTargetIsDirectory = 1 ]
+	then
+		#Enter record to restore.info
+		funcWriteStubToFile
+
+		#Recursively attack items
+		funcRecursiveAttack
+
+		rm -r $varDirectory
+	fi
+}
+
+funcCheckCommands()
+{
+	#The function determines if the given string is a valid command.
+	#Command flags are set accordingly.
+	#The function should exit if the supposed command is invalid.
+
+	varCommandI=0
+	varCommandV=0
+	varCommandR=0
+	
+	case $1 in
+		'-i')
+			varCommandI=1
+			varSkipTarget=1
+		;;
+		'-v')
+			varCommandV=1
+			varSkipTarget=1
+		;;
+		'-r')
+			varCommandR=1
+			varSkipTarget=1
+		;;
+		'-iv')
+			varCommandI=1
+			varCommandV=1
+			varSkipTarget=1
+		;;
+		'-vi')
+			varCommandI=1
+			varCommandV=1
+			varSkipTarget=1
+		;;
+		'-rv')
+			varCommandV=1
+			varCommandR=1
+			varSkipTarget=1
+		;;
+		'-vr')
+			varCommandV=1
+			varCommandR=1
+			varSkipTarget=1
+		;;
+		'-ri')
+			varCommandR=1
+			varCommandI=1
+			varSkipTarget=1
+		;;
+		'-ir')
+			varCommandI=1
+			varCommandR=1
+			varSkiptTarget=1
+		;;
+		'-riv')
+			varCommandR=1
+			varCommandI=1
+			varCommandV=1
+			varSkipTarget=1
+		;;
+		'-rvi')
+			varCommandR=1
+			varCommandI=1
+			varCommandV=1
+			varSkipTarget=1
+		;;
+		'-ivr')
+			varCommandR=1
+			varCommandI=1
+			varCommandV=1
+			varSkipTarget=1
+		;;
+		'-irv')
+			varCommandR=1
+			varCommandI=1
+			varCommandV=1
+			varSkipTarget=1
+		;;
+		'-vri')
+			varCommandR=1
+			varCommandI=1
+			varCommandV=1
+			varSkipTarget=1
+		;;
+		'-vir')
+			varCommandR=1
+			varCommandI=1
+			varCommandV=1
+			varSkipTarget=1
+		;;
+		*)
+			varCommandR=0
+			varCommandI=0
+			varCommandV=0
+			varSkipTarget=0
+			
+			#check if input is an attempted argument
+				#if input begins with -
+			if [[ $1 == -* ]]
+			then
+				echo "remove: invalid option -- \' $1 \'"
+				exit 706
+			fi
+		;;
+	esac
+}
+
+funcGetConfirmation()
+{
+	#The function prompts the user to confirm the removal of an item
+	#The function exits if the user does not confirm
+
+	varFileSize=$(stat -c%s $varFileName)
+	varFileEmpty=''
+
+	if [ $varTargetIsFile ]
+	then
+		varFileSize=$(stat -c%s $varFileName)
+		varFileEmpty=''
+
+		if [ $varFileSize = 0 ]
+		then
+			varFileEmpty=$(echo 'empty')
+		fi
+
+		echo 'Remove regular '$varFileEmpty' file '$varFileName'?'
+	else
+		echo 'Remove directory '$varTrueDirectory'?'
+	fi
+	read varResponse
+	#if anything but y, Y, or yes, then exit
+	if [[ $varResponse != [yY] ]] && [[ $varResponse != [yY][eE][sS] ]]
+	then
+		exit 705
+	fi
+}
+
+funcOutputRemoval()
+{
+	#The function outputs that the item was removed
+
+	#Output for -v
+	echo 'removed '$1
+}
+
+funcCheckTargetFile()
+{
+	#The function conducts the necessary checks before action on the arguments
+	
+	#Check per target file
+	if [ $varCheckedFirst = 0 ]
+	then
+		#Command checks
+		funcCheckCommands $1
+		varCheckedFirst=1
+	fi
+
+	if [ $varSkipTarget = 0 ]
+	then
+		if [ $varCommandR = 1 ]
+		then
+			#If target file does not exist
+			funcCheckAnythingExists $1
+		else
+			#If target file does not exist
+			funcCheckFileExists $1
+		fi
+
+		#If target file is this script
+		funcCheckIfSelf $1
+	else
+		varSkipTarget=0
+	fi
+}
+
+funcActionTargetFile()
+{
+	#The function acts on the given item to process it as necessary
+
+	#Action per target file
+	if [ $1 != '-i' ] &&
+		[ $1 != '-v' ] &&
+		[ $1 != '-iv' ] && 
+		[ $1 != '-vi' ] &&
+		[ $1 != '-r' ] &&
+		[ $1 != '-rv' ] &&
+		[ $1 != '-vr' ] &&
+		[ $1 != '-ri' ] &&
+		[ $1 != '-ir' ] &&
+		[ $1 != '-ivr' ] &&
+		[ $1 != '-irv' ] &&
+		[ $1 != '-vir' ] &&
+		[ $1 != '-vri' ] &&
+		[ $1 != '-rvi' ] &&
+		[ $1 != '-riv' ] 
+	then
+		#if [ $varTargetIsFile ]
+		#then
+			#Get parts of file
+			funcGetFileParts $1
+		#fi
+
+		if [ $varCommandI = 1 ]
+		then
+			#Get Cofirmation
+			funcGetConfirmation
+		fi
+
+		#Move file to ~/deleted
+		funcDeleteFile
+
+		if [ $varCommandV = 1 ]
+		then
+			#output what was removed
+			funcOutputRemoval $1
+		fi
+	fi
+
+}
+
+#Start of script
+
+#Precheck
+
+#If there are no arguments
+funcCheckNoArguments $#
+
+#If ~/deleted does not exist
+funcCheckDeletedExists
+
+varCheckedFirst=0
+varSkipTarget=0
+
+for x in $@
+do
+	#Check per target file
+	funcCheckTargetFile $x
+
+	#Action per target file
+	funcActionTargetFile $x
+done

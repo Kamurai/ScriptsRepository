@@ -1,0 +1,17 @@
+#!/bin/bash
+echo "Please enter user name:"
+read user
+while ! [ "$user" ]
+do
+        echo "Please enter a name for checking!!"
+        read user
+done
+
+name=$(grep $user /etc/passwd | cut -d":" -f5)
+if [ "$name" ]
+then
+        echo "Full name for user $user is $name"
+else
+        echo "Name not found"
+fi	
+

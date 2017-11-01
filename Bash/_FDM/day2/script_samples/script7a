@@ -1,0 +1,9 @@
+#!/bin/bash
+
+echo "Enter username:"
+read name
+grep $name /etc/passwd | cut -d":" -f5 | while read details
+do
+        echo "Full name is $details"
+done
+

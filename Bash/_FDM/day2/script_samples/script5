@@ -1,0 +1,13 @@
+#!/bin/bash
+author=$(grep $USER /etc/passwd | cut -d":" -f5)
+today=$(date +"%Y/%m/%d")
+read desc
+cat <<eof
+#!/bin/bash
+###################################
+## Program     : $1
+## Author      : $author
+## Date        : $today
+## Description : $desc
+###################################
+eof

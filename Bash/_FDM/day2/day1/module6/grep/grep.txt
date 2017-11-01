@@ -1,0 +1,16 @@
+The grep family consists of the commands grep, egrep and fgrep. The grep command globally
+ searches for regular expressions in files and prints all lines that contain the expression.
+The egrep and fgrep commands are simply a variant of grep. The egrep command is 
+an extended grep, supporting more regular expression metacharacters. 
+The fgrep command, called fixed grep, and sometimes called fast grep, 
+treats all characters as literals; 
+that is regular expression characters aren't special, they match themselves.
+
+A metacharacter is a character that represents something other than itself. 
+^ and  $ are examples of metacharacters.
+
+Find the word Unix in this line
+Unix is a word in this line
+In this line is the word Unix
+This line also contains the word unix
+This line contains the word unilateral

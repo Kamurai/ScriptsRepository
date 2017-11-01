@@ -1,0 +1,4 @@
+#!/bin/bash
+name=$(grep $USER /etc/passwd | cut -d":" -f5 | tr "[a-z]" "[A-Z]")
+echo "Full name for user $USER is $name"
+

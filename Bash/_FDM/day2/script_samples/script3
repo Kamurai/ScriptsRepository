@@ -1,0 +1,3 @@
+#!/bin/bash
+name=$(grep $1 /etc/passwd | cut -d":" -f5)
+echo "Full name for user $1 is $name"

@@ -1,0 +1,276 @@
+#!/bin/bash
+#Christopher Kemerait
+#18 July 2017
+#Restore script for Unix Project
+
+
+#Phase 2
+
+#this script should be in ~/project
+#this script should execute as 'sh restore fl_1234'
+	#line format: fileName_iNode:directory
+	#located in ~/deleted
+
+#this script should restore the file to its original location, via path name in .restore.info.
+	#If the file does not exist, then display error message
+	#If no fileName is provided, then display error message
+	#If fileName exists, then prompt "Do you want to overwrite? y/n"		#If y, Y, or yes (any combination), then continue
+		#If ANYTHING ELSE, then exit
+
+#Accepts name of file as argument
+	#existing file in ~/deleted
+	#existing record in ~/deleted/.restore.info
+	#If fileName exists in restore location
+		#then prompt for overwrite
+			#If y, Y, or yes (any combination), then continue
+			#If ANYTHING ELSE, then exit
+#Move file to filePath
+	#delete existing fileName
+
+#Rename file to fileName
+
+#Delete record from .restore.info
+
+
+#Functions
+funcCheckNoArguments()
+{
+	#If there are not any arguments
+	if [ $1 \< 1 ]
+	then
+		echo "There is no target file."
+		exit 700
+	fi
+}
+
+funcCheckTooManyArguments()
+{
+	#If there is more than 1 argument
+	if [ $1 \> 1 ]
+	then
+		echo "There is more than 1 file."
+		exit 701
+	fi
+}
+
+funcCreateRestoreFile()
+{
+	#create ~/deleted/.restore.info
+	touch ~deleted/.restore.info
+}
+
+funcCheckRestoreExists()
+{
+	#If ~/deleted/.restore.info does NOT exist
+	if [ ! -f ~/deleted/.restore.info ]
+	then
+		funcCreateRestoreFile
+	fi
+}
+
+funcCreateDeletedFolder()
+{
+	#create ~/deleted
+	mkdir ~/deleted
+}
+
+funcCheckDeletedExists()
+{
+	#If ~deleted does NOT exist
+	if [ ! -d ~/deleted ]
+	then
+		funcCreateDeletedFolder
+	fi
+
+	funcCheckRestoreExists
+}
+
+funcGetFileParts()
+{
+	varFileName=$(basename $1)
+	varINode=$(stat ~/deleted/$1 -c%i)
+	varDirectory=$(readlink -e ~/deleted/$1)
+	varTrueDirectory=${varDirectory%/*}/
+}
+
+funcCheckFileExists()
+{
+	#If file does not exist
+	if [ ! -f ~/deleted/$(basename $1) ]
+	then
+		echo "Target file $1 does not exist in ~/deleted."
+		exit 702
+	fi
+}
+
+funcCheckRecordExists()
+{
+	#If file record does not exist in ~/deleted/.restore.info
+		#scan ~/deleted/.restore.info
+		#cut on -f d':' -f1
+		#filter by fileName
+			#line format: fileName_iNode:directory
+
+	varTemp=$(cat ~/deleted/.restore.info | cut -d':' -f1 | grep $(basename $1))
+
+	if [ -z $varTemp ]
+	then
+		echo "Target file does not have a record in .restore.info."
+		exit 703
+	fi	
+}
+
+funcGetTargetFileParts()
+{
+	#Get Target File Parts
+
+	#Get TargetFileName
+	varTargetFileName=$(cat ~/deleted/.restore.info | grep $varFileName | cut -d':' -f1 | cut -d'_' -f1)
+	#Get TargetFileName
+	varTargetFilePath=$(cat ~/deleted/.restore.info | grep $varFileName | cut -d':' -f2)
+	varTrueTargetDirectory=${varTargetFilePath%/*}/
+}
+
+funcCheckTargetFileExists()
+{
+	#If file already exists at Target File Path
+	if [ -f $varTargetFilePath ]
+	then
+		read -p "Target file already exists.  Overwrite this file?" varResponse
+		#if anything but y, Y, or yes, then exit
+		if [ $varResponse != [yY] ] && [ $varResponse != [yY][eE][sS] ]
+		then
+			exit 704
+		fi
+	fi
+}
+
+funcDeleteRecordFromFile()
+{
+	#Remove record from file
+		#line format: fileName_iNode: directory
+	
+	sed '/'$varFileName'/d' ~/deleted/.restore.info > ~/deleted/.temp.info
+	
+	mv ~/deleted/.temp.info ~/deleted/.restore.info
+}
+
+funcRestoreFile()
+{
+	#Move file from ~/deleted
+
+	#move file to targetfilepath
+	mv ~/deleted/$varFileName $varTargetFilePath
+
+	#Delete record from .restore.info
+	#funcDeleteRecordFromFile
+}
+
+funcCheckCommands()
+{
+	varCommandR=0
+
+	case $1 in
+		'-r')
+			varCommandR=1
+			varSkipTarget=1
+		;;
+		*)
+			varCommandR=0
+			varSkipTarget=0
+		;;
+	esac
+}
+
+funcCheckTargetFile()
+{
+	if [ $varCheckedFirst = 0 ]
+	then
+		#Command checks
+		funcCheckCommands $1
+		varCheckedFirst=1
+	fi
+
+	if [ $varSkipTarget = 0 ]
+	then
+		#If target file exists at ~/deleted
+		funcCheckFileExists $1
+	else
+		varSkipTarget=0
+	fi
+}
+
+funcActionTargetFile()
+{
+	echo "Action Jackson"
+
+	#Action per target file
+	if [ $1 != '-r' ]
+	then
+		#Get file parts
+		funcGetFileParts $1
+
+		#If target file record exists in ~/deleted/.restore.info
+		funcCheckRecordExists $1
+
+		#Get File Parts for Target File
+		funcGetTargetFileParts
+
+		#If file path already exists
+		#funcCreateDirectoriesFor
+
+		#If file already exists at target filepath
+		funcCheckTargetFileExists
+
+		#Move file fro ~/deleted
+		funcRestoreFile
+	fi
+}
+
+funcCreateDirectoriesFor()
+{
+	#Check if target directory exists
+
+	varDirectorySet=''
+	#if target directory does not exist
+	if [ ! -d $varTrueTargetDirectory ]
+	then
+		#then recreate directories from top to bottom
+
+		#create list/view/array of directories, in order
+		varDirectorySet=$(tr $varTrueTargetDirectory '/' ' ')
+
+
+		#loop through directories
+
+		varCheckDirectory=1
+		#if $varCheckDirectory=1
+
+			#if directory does not exist
+
+				#then create the directory
+
+				#set $varCheckDirectory=0
+		#else
+			#create remaining directory
+	fi
+		#end loop
+}
+
+#Start of script
+
+#If there are no arguments
+funcCheckNoArguments $#
+
+#If ~/deleted does not exist
+funcCheckDeletedExists
+varCheckedFirst=0
+varSkipTarget=0
+#Check per target file
+for x in $@
+do
+	funcCheckTargetFile $x
+
+	funcActionTargetFile $x
+done
+

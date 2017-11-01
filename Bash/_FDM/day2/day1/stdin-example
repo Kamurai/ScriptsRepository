@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#get the user first name in
+read -p "Please enter your first name: " fname
+
+#get the user second name
+read -p "Please enter your surname: " sname
+
+#dispaly the users full name
+echo "Your full name is $fname $sname"

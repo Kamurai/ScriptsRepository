@@ -1,0 +1,22 @@
+#!/bin/bash
+function icontinue (){
+        while true
+        do
+                echo "Continue? (y/n) "
+                read ANSWER
+                case "$ANSWER" in
+                        [Yy] ) return 0;;
+                        [Nn] ) return 1;;
+                        * )
+                        echo "Answer y or n";;
+                esac
+        done
+}
+
+if icontinue
+then
+        echo "Carry on"
+else
+        echo "quitting"
+fi
+

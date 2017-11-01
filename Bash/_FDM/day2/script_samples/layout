@@ -1,0 +1,28 @@
+##!/bin/bash
+# start program
+
+# Initialise variables 
+
+function setup(){ 
+	command list
+} 
+
+function do_data(){
+	command list
+} 
+
+function cleanup(){
+	command list
+} 
+
+function errors(){
+	command list
+} 
+
+#Main code
+setup 
+do_data 
+cleanup 
+
+# end program 
+

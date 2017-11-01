@@ -1,0 +1,25 @@
+#!/bin/bash
+clear
+cat << menu
+************MENU************
+****** 1) View Script 1 ****
+****** 2) View Script 2 ****
+****** 3) View Script 3 ****
+****** 4) View Script 4 ****
+****************************
+Enter your selection (1 to 4):
+menu
+
+read input
+clear
+case $input in
+        1)      cat script1
+        ;;
+        2)      cat script2
+        ;;
+        3)      cat script3
+        ;;
+        4)      cat script4
+        ;;
+        *)      echo "Script not found"
+esac

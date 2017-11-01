@@ -1,0 +1,10 @@
+wc: /etc/pam.d: Is a directory
+wc: /etc/passwd-: Permission denied
+wc: /etc/pbis: Is a directory
+wc: /etc/perl: Is a directory
+wc: /etc/pm: Is a directory
+wc: /etc/postfix: Is a directory
+wc: /etc/ppp: Is a directory
+wc: /etc/profile.d: Is a directory
+wc: /etc/python: Is a directory
+wc: /etc/python2.7: Is a directory

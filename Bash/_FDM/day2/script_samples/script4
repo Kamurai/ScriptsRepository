@@ -1,0 +1,6 @@
+#!/bin/bash
+echo "Please enter user name:"
+read user
+name=$(grep $user /etc/passwd | cut -d":" -f5)
+echo "Full name for user $user is $name"
+
