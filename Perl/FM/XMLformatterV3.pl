@@ -49,7 +49,7 @@ foreach $line (@fileLines)
 	#split line into array of characters
 	@lineCharacters = split(//, $line);
 	
-	#walk thourgh array of characters
+	#walk through array of characters
 	for($tracker = 0; $tracker < scalar(@lineCharacters); $tracker++)
 	{
 		#pull single value of array
@@ -91,6 +91,7 @@ foreach $line (@fileLines)
 					if( 
 						(@lineCharacters[($tracker-1)] eq ' ') ||
 						(@lineCharacters[($tracker-1)] eq "\t") || 
+						(@lineCharacters[($tracker-1)] eq ">") || 
 						($tracker == 0)
 						)
 					{
@@ -183,7 +184,7 @@ foreach $line (@fileLines)
 			if(($tracker+1) < scalar(@lineCharacters))
 			{
 				#if next character is '<' and not "\n"
-				if((@lineCharacters[($tracker+1)] eq '<') && (@lineCharacters[($tracker+1)] eq "\n"))
+				if((@lineCharacters[($tracker+1)] eq '<') && !(@lineCharacters[($tracker+1)] eq "\n"))
 				{
 					#add eol to result
 					$result = $result."\n";

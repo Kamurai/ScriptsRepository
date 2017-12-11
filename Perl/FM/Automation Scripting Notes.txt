@@ -1,0 +1,13 @@
+Possible script automation:
+	Formatting:
+		globalize xmlns:gse="http://www.datamodelextension.org"
+		
+	Calculations:
+		
+		
+	Conditionals:
+		
+	
+	
+Script:
+	
